@@ -57,13 +57,23 @@ int main(int argc, char **argv) {
 	}
 	
 	XkbStateRec xkb_state;
-	//while (1) {
-		XkbLockGroup(display, XkbUseCoreKbd, 0); // change to first layout
-		XkbGetState(display, XkbUseCoreKbd, &xkb_state);
+	Window wnd;
+	int revert_to;
+	int last_wnd_id = 0;
+	
+	while (1) {
 		
-		// cur group
-		// xkb_state.group
-	//}
+		XGetInputFocus(display, &wnd, &revert_to);
+		
+		if ((int)wnd != last_wnd_id) {
+			
+			XkbLockGroup(display, XkbUseCoreKbd, 0); // change to first layout
+			XkbGetState(display, XkbUseCoreKbd, &xkb_state); // need for change layout
+			
+			last_wnd_id = (int)wnd;
+			//printf("wnd: -%d-\n", (int)wnd);
+		}
+	}
 	
 	return 0;
 }
