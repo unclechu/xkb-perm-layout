@@ -57,12 +57,25 @@ int main(int argc, char **argv) {
 	}
 	
 	XkbStateRec xkb_state;
+	Window root_wnd = DefaultRootWindow(display);
 	Window wnd;
+	
+	XEvent event;
+	
+	int state;
 	int revert_to;
 	int last_wnd_id = 0;
+	unsigned long event_mask = EnterWindowMask | LeaveWindowMask;
+	
+	XGetInputFocus(display, &root_wnd, &state);
+	XSelectInput(display, root_wnd, event_mask);
 	
 	while (1) {
 		
+		XPutBackEvent(display, &event);
+		XNextEvent(display, &event);
+		
+		// get current active window id
 		XGetInputFocus(display, &wnd, &revert_to);
 		
 		if ((int)wnd != last_wnd_id) {
@@ -71,7 +84,6 @@ int main(int argc, char **argv) {
 			XkbGetState(display, XkbUseCoreKbd, &xkb_state); // need for change layout
 			
 			last_wnd_id = (int)wnd;
-			//printf("wnd: -%d-\n", (int)wnd);
 		}
 	}
 	
