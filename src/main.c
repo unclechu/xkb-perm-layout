@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
 	
 	// there is always at least one group
 	if (kbd_desc_ptr->ctrls->num_groups <= 0) {
+		XCloseDisplay(display);
 		fprintf(stderr, "XKB group count is 0.\n");
 		return 1;
 	}
