@@ -57,26 +57,18 @@ int main(int argc, char **argv) {
 	}
 	
 	XkbStateRec xkb_state;
-	Window root_wnd = DefaultRootWindow(display);
+	XEvent event;
 	Window wnd;
 	
-	XEvent event;
-	
-	int state;
 	int revert_to;
 	int last_wnd_id = 0;
-	unsigned long event_mask = EnterWindowMask | LeaveWindowMask;
-	
-	XGetInputFocus(display, &root_wnd, &state);
-	XSelectInput(display, root_wnd, event_mask);
+	unsigned long event_mask = FocusChangeMask;
 	
 	while (1) {
 		
-		XPutBackEvent(display, &event);
-		XNextEvent(display, &event);
-		
-		// get current active window id
 		XGetInputFocus(display, &wnd, &revert_to);
+		XSelectInput(display, wnd, event_mask);
+		XNextEvent(display, &event);
 		
 		if ((int)wnd != last_wnd_id) {
 			
