@@ -4,9 +4,27 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
+
+
+int error_handler(Display *dpy, XErrorEvent *ev)
+{
+	// we get BadWindow error when close focused window
+	// it's okay
+	if (ev->error_code == 3) {
+		return 0;
+	}
+	
+	char mess[128];
+	XGetErrorText(dpy, ev->error_code, mess, sizeof(mess));
+	fprintf(stderr, "X11 Error: %s (error code: %d).\n", mess, ev->error_code);
+	exit(ev->error_code);
+	return ev->error_code;
+}
 
 int main(int argc, char **argv) {
 	
@@ -56,18 +74,19 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
+	XSetErrorHandler(error_handler);
+	
 	XkbStateRec xkb_state;
 	XEvent event;
 	Window wnd;
 	
 	int revert_to;
 	int last_wnd_id = 0;
-	unsigned long event_mask = FocusChangeMask;
 	
 	while (1) {
 		
 		XGetInputFocus(display, &wnd, &revert_to);
-		XSelectInput(display, wnd, event_mask);
+		XSelectInput(display, wnd, FocusChangeMask);
 		XNextEvent(display, &event);
 		
 		if ((int)wnd != last_wnd_id) {
