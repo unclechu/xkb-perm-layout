@@ -1,7 +1,10 @@
 xkb-perm-layout
 ===============
 
-Utility to switch to default layout when X window switching
+Daemon that resets current keyboard layout when another window is focused.
+
+I implemented logic of this tool to another my own more complex tool:
+[`xlib-keys-hack`](https://github.com/unclechu/xlib-keys-hack).
 
 Build
 -----
